@@ -1,0 +1,70 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "Board.h"
+#include "TheMaze/Board/Components/BoardField.h"
+#include "Logging/StructuredLog.h"
+
+ABoard::ABoard()
+{
+	RootComponent = CreateDefaultSubobject<USceneComponent>("RootComponent");
+}
+
+void ABoard::BuildBoard()
+{
+	ClearBoard();
+	
+	if (BoardSize.GetMin() <= 0 || BoardSize.GetMax() <= 0)
+	{
+		UE_LOGFMT(LogBoard, Error, "ABoard::BuildBoard() - Invalid board size: {0}", BoardSize.ToString());
+		
+		return;
+	}
+	
+	if (FieldClass == nullptr)
+	{
+		UE_LOGFMT(LogBoard, Error, "ABoard::BuildBoard() - Field class is null!");
+		
+		return;
+	}
+	
+	int BoardLenght = BoardSize.GetMin() * BoardSize.GetMax(); 
+	for (int i = 0; i < BoardLenght; i++)
+	{
+		const int Row = i / BoardSize.GetMin();
+		const int Column = i % BoardSize.GetMin();
+		
+		FString FieldName = "Field" + FString::FromInt(i);
+		if (auto Field = NewObject<UBoardField>(this, FieldClass, *FieldName))
+		{	
+			Field->RegisterComponent();
+			Field->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+			Field->CreationMethod = EComponentCreationMethod::Instance;
+			
+			Fields.Add(Field);
+			
+			float LocationX = (Field->GetFieldSize().GetMin() + SpaceBetweenFields.GetMin()) * Column;
+			float LocationY = (Field->GetFieldSize().GetMax() + SpaceBetweenFields.GetMax()) * Row;
+			
+			Field->SetRelativeLocation(FVector(LocationX, LocationY, GetActorLocation().Z));
+		}
+	}
+}
+
+void ABoard::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	
+	ClearBoard();
+}
+
+void ABoard::ClearBoard()
+{
+	for (auto BoardField : Fields)
+	{
+		BoardField->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);		
+		BoardField->DestroyComponent();
+	}
+	
+	Fields.Empty();
+}
