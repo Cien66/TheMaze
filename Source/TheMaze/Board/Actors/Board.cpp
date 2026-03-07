@@ -4,10 +4,29 @@
 #include "Board.h"
 #include "TheMaze/Board/Components/BoardField.h"
 #include "Logging/StructuredLog.h"
+#include "TheMaze/Board/Subsystems/BoardPathCreatorSubsystem.h"
 
 ABoard::ABoard()
 {
 	RootComponent = CreateDefaultSubobject<USceneComponent>("RootComponent");
+}
+
+void ABoard::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	if (const auto PathCreator = GetWorld() ? GetWorld()->GetSubsystem<UBoardPathCreatorSubsystem>() : nullptr)
+		PathCreator->RegisterBoard(this);
+}
+
+void ABoard::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (const auto PathCreator = GetWorld() ? GetWorld()->GetSubsystem<UBoardPathCreatorSubsystem>() : nullptr)
+		PathCreator->UnregisterBoard(this);	
+	
+	ClearBoard();
+	
+	Super::EndPlay(EndPlayReason);
 }
 
 void ABoard::BuildBoard()
@@ -51,13 +70,6 @@ void ABoard::BuildBoard()
 	}
 }
 
-void ABoard::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	Super::EndPlay(EndPlayReason);
-	
-	ClearBoard();
-}
-
 void ABoard::ClearBoard()
 {
 	for (auto BoardField : Fields)
@@ -67,4 +79,21 @@ void ABoard::ClearBoard()
 	}
 	
 	Fields.Empty();
+}
+
+
+void ABoard::CovertIndexToRowAndColumn(int InIndex, int& OutRow, int& OutColumn) const
+{
+	if (InIndex < 0 || InIndex >= GetFields().Num()) return;
+	
+	OutRow = InIndex / GetBoardSize().GetMin();
+	OutColumn = InIndex % GetBoardSize().GetMin();	
+}
+
+int ABoard::ConvertRowAndColumnToIndex(int InRow, int InColumn) const
+{
+	if (InRow < 0 || InColumn < 0) return -1;
+	
+	const int Index = InRow * GetBoardSize().GetMin() + InColumn;	
+	return Index;
 }

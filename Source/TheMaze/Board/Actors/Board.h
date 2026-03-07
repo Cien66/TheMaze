@@ -16,18 +16,29 @@ class THEMAZE_API ABoard : public AActor
 public:
 	ABoard();
 	
+	UFUNCTION(BlueprintCallable, CallInEditor)
+	void BuildBoard();
+	
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE TArray<UBoardField*> GetFields() const {return Fields;}
 	
-	UFUNCTION(BlueprintCallable, CallInEditor)
-	void BuildBoard();
-		
+	
+	UFUNCTION(BlueprintCallable)
+	void CovertIndexToRowAndColumn(int InIndex, int& OutRow, int& OutColumn) const;
+	UFUNCTION(BlueprintPure)
+	int ConvertRowAndColumnToIndex(int InRow, int InColumn) const;
+	
+	FORCEINLINE FInt32Point GetBoardSize() const {return BoardSize;}
+	
 protected:
+	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
 private:
 	UFUNCTION()
 	void ClearBoard();
 	
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UBoardField> FieldClass;
 	
