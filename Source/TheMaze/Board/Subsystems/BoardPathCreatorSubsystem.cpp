@@ -10,7 +10,7 @@ void UBoardPathCreatorSubsystem::RegisterBoard(ABoard* InBoard)
 {
 	Board = InBoard;
 	
-	CreatePath();
+	//CreatePath();
 }
 
 TArray<int> UBoardPathCreatorSubsystem::CreatePath()

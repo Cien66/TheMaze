@@ -18,13 +18,13 @@ class THEMAZE_API UBoardField : public UStaticMeshComponent
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(Blueprintable)
+	UFUNCTION(BlueprintCallable)
 	bool SetKindOfField(FGameplayTag InKindOfField);
 	UFUNCTION(BlueprintPure)
 	FGameplayTag GetKindOfField() const { return KindOfField; }
 	
 	
-	UFUNCTION(Blueprintable)
+	UFUNCTION(BlueprintCallable)
 	void SetIsHide(bool bInIsHide);
 	UFUNCTION(BlueprintPure)
 	bool GetIsHide() const { return bIsHide;}
@@ -49,7 +49,7 @@ private:
 	FGameplayTag KindOfField;
 	
 	UPROPERTY(EditAnywhere)
-	bool bIsHide = false;
+	bool bIsHide = true;
 	
 	UPROPERTY(EditAnywhere)
 	FGameplayTag HideTag;	

@@ -21,7 +21,7 @@ void ABoard::BeginPlay()
 
 void ABoard::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	ClearBoard();
+	//ClearBoard();
 	
 	Super::EndPlay(EndPlayReason);
 }
@@ -71,6 +71,7 @@ void ABoard::ClearBoard()
 {
 	for (auto BoardField : Fields)
 	{
+		if (!BoardField) continue;
 		BoardField->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);		
 		BoardField->DestroyComponent();
 	}
