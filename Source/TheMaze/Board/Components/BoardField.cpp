@@ -26,6 +26,9 @@ bool UBoardField::SetKindOfField(FGameplayTag InKindOfField)
 	
 	UE_LOGFMT(LogBoard, VeryVerbose, "UBoardField::SetKindOfField() - Set KindOfField to: {0}", InKindOfField.ToString());
 	
+	if (!bIsHide)
+		SetMaterialByTag(KindOfField);
+	
 	return true;
 }
 

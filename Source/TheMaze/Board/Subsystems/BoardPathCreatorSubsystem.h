@@ -11,34 +11,7 @@ class UBoardField;
 class ABoard;
 
 
-USTRUCT()
-struct FPathFindingStep
-{
-	GENERATED_BODY()
-	
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UBoardField> Field;
-	
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UBoardField> LeftField;	
-	UPROPERTY(VisibleAnywhere)
-	bool bIsCheckLeftField = false;
-	
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UBoardField> RightField;
-	UPROPERTY(VisibleAnywhere)
-	bool bIsCheckRightField = false;
-	
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UBoardField> UpField;
-	UPROPERTY(VisibleAnywhere)
-	bool bIsCheckUpField = false;
-	
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UBoardField> DownField;
-	UPROPERTY(VisibleAnywhere)
-	bool bIsCheckDownField = false;
-};
+
 /**
  * 
  */
@@ -49,20 +22,27 @@ class THEMAZE_API UBoardPathCreatorSubsystem : public UWorldSubsystem
 	
 public:
 	UFUNCTION(BlueprintCallable)
-	void RegisterBoard(const ABoard* InBoard);
-	UFUNCTION(BlueprintCallable)
-	void UnregisterBoard(const ABoard* InBoard);
+	void RegisterBoard(ABoard* InBoard);
 	
 	UFUNCTION(BlueprintCallable)
-	void CreatePath(const ABoard* InBoard);
+	TArray<int> CreatePath();
 	
+	UFUNCTION(BlueprintPure)
+	ABoard* GetBoard() const {return Board;}
 private:
 	UFUNCTION()
-	void GetFieldAroundIndex(int InIndex, const ABoard* InBoard, UBoardField*& InLeftField, UBoardField*& InRightField, UBoardField*& InUpField, UBoardField*& InDownField);
+	TArray<int> FindSteps( const TArray<int>& InLastSteps, const int& InMetaIndex);
+	UFUNCTION()
+	void GetFieldAroundIndex(int InIndex, int& OutLeftFieldIndex, int& OutRightFieldIndex, int& OutUpFieldIndex, int& OutDownFieldIndex) const;	
+	UFUNCTION()
+	bool CheckFieldStep(int InIndex, const TArray<int>& InCurrentStepIndexes, const TArray<int>& InFieldIndexesAround) const;
 	
+	UFUNCTION()
+	int GetNextStepIndex(TArray<int> InFieldIndexesAround) const;
+	
+	UFUNCTION()
+	FString GetIntArrayToString(const TArray<int>& InArray) const;
 	
 	UPROPERTY(VisibleAnywhere)
-	TArray<TObjectPtr<const ABoard>> Boards;
-	
-	
+	TObjectPtr<ABoard> Board;
 };

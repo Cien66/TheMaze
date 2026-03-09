@@ -21,9 +21,6 @@ void ABoard::BeginPlay()
 
 void ABoard::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	if (const auto PathCreator = GetWorld() ? GetWorld()->GetSubsystem<UBoardPathCreatorSubsystem>() : nullptr)
-		PathCreator->UnregisterBoard(this);	
-	
 	ClearBoard();
 	
 	Super::EndPlay(EndPlayReason);
@@ -84,6 +81,9 @@ void ABoard::ClearBoard()
 
 void ABoard::CovertIndexToRowAndColumn(int InIndex, int& OutRow, int& OutColumn) const
 {
+	OutRow = INDEX_NONE;
+	OutColumn = INDEX_NONE;
+	
 	if (InIndex < 0 || InIndex >= GetFields().Num()) return;
 	
 	OutRow = InIndex / GetBoardSize().GetMin();
@@ -92,8 +92,9 @@ void ABoard::CovertIndexToRowAndColumn(int InIndex, int& OutRow, int& OutColumn)
 
 int ABoard::ConvertRowAndColumnToIndex(int InRow, int InColumn) const
 {
-	if (InRow < 0 || InColumn < 0) return -1;
+	if (InRow < 0 || InColumn < 0) return INDEX_NONE;
 	
-	const int Index = InRow * GetBoardSize().GetMin() + InColumn;	
+	const int Index = InRow * GetBoardSize().GetMin() + InColumn;
+	
 	return Index;
 }
