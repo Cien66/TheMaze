@@ -23,6 +23,9 @@ void ABoard::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	//ClearBoard();
 	
+	if (const auto PathCreator = GetWorld() ? GetWorld()->GetSubsystem<UBoardPathCreatorSubsystem>() : nullptr)
+		PathCreator->UnregisterBoard(this);
+	
 	Super::EndPlay(EndPlayReason);
 }
 

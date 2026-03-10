@@ -13,6 +13,12 @@ void UBoardPathCreatorSubsystem::RegisterBoard(ABoard* InBoard)
 	//CreatePath();
 }
 
+void UBoardPathCreatorSubsystem::UnregisterBoard(ABoard* InBoard)
+{
+	if (Board == InBoard) 
+		Board = nullptr;
+}
+
 TArray<int> UBoardPathCreatorSubsystem::CreatePath()
 {
 	if (!Board) return {};
